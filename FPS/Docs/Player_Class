@@ -1,0 +1,91 @@
+```mermaid
+classDiagram
+    CharacterLowerBodyHalf ..* PlayerCharacterController
+    CharacterUpperBodyHalf ..* PlayerCharacterController
+
+    PlayerCharacterController --|> MonoBehaviour
+    class PlayerCharacterController{
+        + bool IsAlive
+        + bool IsGrounded
+        + bool HasDefuser
+
+        + float speed
+        + float runSpeed
+
+        + Rigidbody rigidbody
+
+        - Idle()
+        - Walk()
+        - Run()
+        - ADS()
+        - Reload()
+        - Plant()
+    }
+    
+    class CharacterLowerBodyHalf{
+        - enum StateEvent
+        - ImtStateMachine~CharacterLowerBodyHalf, StateEvent~ stateMachine
+
+        - animator Animator
+
+        - Init()
+        - Update()
+        
+        - SetState(StateEvent)
+    }
+
+    namespace LowerBodyState{
+        class Idle_1
+        class Crouch_Idle
+        class Crouch_Walk
+        class Walk
+        class Run
+    }
+
+    CharacterLowerBodyHalf --> Idle_1: contains
+    CharacterLowerBodyHalf --> Crouch_Idle: contains
+    CharacterLowerBodyHalf --> Crouch_Walk: contains
+    CharacterLowerBodyHalf --> Walk: contains
+    CharacterLowerBodyHalf --> Run: contains
+
+    class ImtStateMachine_State{
+        - Enter()
+        - Update()
+        - Exit()
+    }
+    Idle_1 --|> ImtStateMachine_State
+    Crouch_Idle --|> ImtStateMachine_State
+    Crouch_Walk--|> ImtStateMachine_State
+    Walk --|> ImtStateMachine_State
+    Run --|> ImtStateMachine_State
+
+    class CharacterUpperBodyHalf{
+        + enum StateEvent
+        - ImtStateMachine~CharacterLowerBodyHalf, StateEvent~ stateMachine
+
+        - animator Animator
+
+        - Init()
+        - Update()
+        
+        - SetState(StateEvent)
+    }
+
+    namespace UpperBodyState{
+        class Idle_2
+        class ADS
+        class Reload
+        class Plant
+    }
+
+    CharacterUpperBodyHalf --> Idle_2: contains
+    CharacterUpperBodyHalf --> ADS: contains
+    CharacterUpperBodyHalf --> Reload: contains
+    CharacterUpperBodyHalf --> Plant: contains
+
+    Idle_2 --|> ImtStateMachine_State
+    ADS --|> ImtStateMachine_State
+    Reload --|> ImtStateMachine_State
+    Plant --|> ImtStateMachine_State
+
+```

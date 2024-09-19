@@ -1,17 +1,26 @@
 ```mermaid
 stateDiagram-v2
-[*] --> Alive
+[*] --> IsAlive_True
 
-Alive --> Dead: die
+IsAlive_True --> IsAlive_False
 
-Dead --> Alive: revive
+IsAlive_False --> IsAlive_True
 ```
 
 ```mermaid
 stateDiagram-v2
-[*] --> Grounded
+[*] --> IsGrounded_True
 
-Grounded --> Midair
+IsGrounded_True --> IsGrounded_False
 
-Midair --> Grounded
+IsGrounded_False --> IsGrounded_True
+```
+
+```mermaid
+stateDiagram-v2
+[*] --> HasDefuser_False
+
+HasDefuser_False --> HasDefuser_True
+
+HasDefuser_True --> HasDefuser_False
 ```
