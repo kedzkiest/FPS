@@ -1,7 +1,7 @@
 ```mermaid
 classDiagram
-    CharacterLowerBodyHalf ..* PlayerCharacterController
-    CharacterUpperBodyHalf ..* PlayerCharacterController
+    PlayerCharacterController *.. CharacterUpperBody
+    PlayerCharacterController *.. CharacterLowerBody
 
     PlayerCharacterController --|> MonoBehaviour
     class PlayerCharacterController{
@@ -9,7 +9,12 @@ classDiagram
         + bool IsGrounded
         + bool HasDefuser
 
-        + float speed
+        - CharacterUpperBody upperBody
+        - CharacterLowerBody lowerBody
+
+        + float Speed
+        + float walkSpeed
+        + float crouchWalkSpeed
         + float runSpeed
 
         + Rigidbody rigidbody
@@ -18,13 +23,14 @@ classDiagram
         - Walk()
         - Run()
         - ADS()
+        - Shoot()
         - Reload()
         - Plant()
     }
     
-    class CharacterLowerBodyHalf{
+    class CharacterLowerBody{
         - enum StateEvent
-        - ImtStateMachine~CharacterLowerBodyHalf, StateEvent~ stateMachine
+        - ImtStateMachine~CharacterLowerBody, StateEvent~ stateMachine
 
         - animator Animator
 
@@ -42,11 +48,11 @@ classDiagram
         class Run
     }
 
-    CharacterLowerBodyHalf --> Idle_1: contains
-    CharacterLowerBodyHalf --> Crouch_Idle: contains
-    CharacterLowerBodyHalf --> Crouch_Walk: contains
-    CharacterLowerBodyHalf --> Walk: contains
-    CharacterLowerBodyHalf --> Run: contains
+    CharacterLowerBody --> Idle_1: contains
+    CharacterLowerBody --> Crouch_Idle: contains
+    CharacterLowerBody --> Crouch_Walk: contains
+    CharacterLowerBody --> Walk: contains
+    CharacterLowerBody --> Run: contains
 
     class ImtStateMachine_State{
         - Enter()
@@ -59,9 +65,9 @@ classDiagram
     Walk --|> ImtStateMachine_State
     Run --|> ImtStateMachine_State
 
-    class CharacterUpperBodyHalf{
+    class CharacterUpperBody{
         + enum StateEvent
-        - ImtStateMachine~CharacterLowerBodyHalf, StateEvent~ stateMachine
+        - ImtStateMachine~CharacterLowerBody, StateEvent~ stateMachine
 
         - animator Animator
 
@@ -78,10 +84,10 @@ classDiagram
         class Plant
     }
 
-    CharacterUpperBodyHalf --> Idle_2: contains
-    CharacterUpperBodyHalf --> ADS: contains
-    CharacterUpperBodyHalf --> Reload: contains
-    CharacterUpperBodyHalf --> Plant: contains
+    CharacterUpperBody --> Idle_2: contains
+    CharacterUpperBody --> ADS: contains
+    CharacterUpperBody --> Reload: contains
+    CharacterUpperBody --> Plant: contains
 
     Idle_2 --|> ImtStateMachine_State
     ADS --|> ImtStateMachine_State
