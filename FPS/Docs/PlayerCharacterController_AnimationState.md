@@ -3,24 +3,24 @@
 stateDiagram-v2
     [*] --> Idle
 
-    Idle --> Crouch_Idle
-    Idle --> Walk
-    Idle --> Run
+    Idle --> Crouch_Idle: Crouch
+    Idle --> Walk: Walk
+    Idle --> Run: Run
 
-    Crouch_Idle --> Idle
-    Crouch_Idle --> Crouch_Walk
+    Crouch_Idle --> Idle: Standup
+    Crouch_Idle --> Crouch_Walk: Walk
     
-    Crouch_Walk --> Crouch_Idle
-    Crouch_Walk --> Walk
-    Crouch_Walk --> Run
+    Crouch_Walk --> Crouch_Idle: Stop
+    Crouch_Walk --> Walk: Standup
+    Crouch_Walk --> Run: Run
 
-    Walk --> Idle
-    Walk --> Crouch_Walk
-    Walk --> Run
+    Walk --> Idle: Stop
+    Walk --> Crouch_Walk: Crouch
+    Walk --> Run: Run
 
-    Run --> Idle
-    Run --> Crouch_Walk
-    Run --> Walk
+    Run --> Idle: Stop
+    Run --> Crouch_Walk: Crouch
+    Run --> Walk: Walk
 ```
 
 ## Upper Body Half
@@ -28,17 +28,17 @@ stateDiagram-v2
 stateDiagram-v2
     [*] --> Idle
 
-    Idle --> ADS
-    Idle --> Reload
-    Idle --> Plant
+    Idle --> ADS: Aim_Hold_On
+    Idle --> Reload: Reload
+    Idle --> Plant: Plant_Hold_On
 
-    ADS --> Idle
-    ADS --> Reload
-    ADS --> Plant
+    ADS --> Idle: Aim_Hold_Off
+    ADS --> Reload: Reload
+    ADS --> Plant: Plant_Hold_On
 
-    Reload --> ADS
-    Reload --> Idle
-    Reload --> Plant
+    Reload --> ADS: Aim_Hold_On
+    Reload --> Idle: Time
+    Reload --> Plant: Plant_Hold_On
 
-    Plant --> Idle
+    Plant --> Idle: Plant_Hold_Off, Time
 ```
