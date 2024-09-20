@@ -5,22 +5,22 @@ stateDiagram-v2
 
     Idle --> Crouch_Idle: Crouch
     Idle --> Walk: Walk
-    Idle --> Run: Run
+    Idle --> Run: Run_Hold_On
 
     Crouch_Idle --> Idle: Standup
     Crouch_Idle --> Crouch_Walk: Walk
     
     Crouch_Walk --> Crouch_Idle: Stop
     Crouch_Walk --> Walk: Standup
-    Crouch_Walk --> Run: Run
+    Crouch_Walk --> Run: Run_Hold_On
 
     Walk --> Idle: Stop
     Walk --> Crouch_Walk: Crouch
-    Walk --> Run: Run
+    Walk --> Run: Run_Hold_On
 
     Run --> Idle: Stop
     Run --> Crouch_Walk: Crouch
-    Run --> Walk: Walk
+    Run --> Walk: Run_Hold_Off
 ```
 
 ## Upper Body Half
