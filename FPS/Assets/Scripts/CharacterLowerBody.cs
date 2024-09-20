@@ -8,7 +8,8 @@ public class CharacterLowerBody
         Standup,
         Crouch,
         Walk,
-        Run,
+        Run_Hold_On,
+        Run_Hold_Off,
         Stop,
     }
 
@@ -22,22 +23,22 @@ public class CharacterLowerBody
 
         stateMachine.AddTransition<Idle, Crouch_Idle>(StateEvent.Crouch);
         stateMachine.AddTransition<Idle, Walk>(StateEvent.Walk);
-        stateMachine.AddTransition<Idle, Run>(StateEvent.Run);
+        stateMachine.AddTransition<Idle, Run>(StateEvent.Run_Hold_On);
 
         stateMachine.AddTransition<Crouch_Idle, Idle>(StateEvent.Standup);
         stateMachine.AddTransition<Crouch_Idle, Crouch_Walk>(StateEvent.Walk);
 
         stateMachine.AddTransition<Crouch_Walk, Crouch_Idle>(StateEvent.Stop);
         stateMachine.AddTransition<Crouch_Walk, Walk>(StateEvent.Standup);
-        stateMachine.AddTransition<Crouch_Walk, Run>(StateEvent.Run);
+        stateMachine.AddTransition<Crouch_Walk, Run>(StateEvent.Run_Hold_On);
 
         stateMachine.AddTransition<Walk, Idle>(StateEvent.Stop);
         stateMachine.AddTransition<Walk, Crouch_Walk>(StateEvent.Crouch);
-        stateMachine.AddTransition<Walk, Run>(StateEvent.Run);
+        stateMachine.AddTransition<Walk, Run>(StateEvent.Run_Hold_On);
 
         stateMachine.AddTransition<Run, Idle>(StateEvent.Stop);
         stateMachine.AddTransition<Run, Crouch_Walk>(StateEvent.Crouch);
-        stateMachine.AddTransition<Run, Walk>(StateEvent.Walk);
+        stateMachine.AddTransition<Run, Walk>(StateEvent.Run_Hold_Off);
 
         stateMachine.SetStartState<Idle>();
     }
@@ -56,13 +57,25 @@ public class CharacterLowerBody
         stateMachine.SendEvent(_stateEvent);
     }
 
-    class Idle: ImtStateMachine<CharacterLowerBody, StateEvent>.State
+    class Idle : ImtStateMachine<CharacterLowerBody, StateEvent>.State
     {
         protected override void Update()
         {
-            if (Input.GetKeyDown(KeyCode.V))
+            if (PlayerCharacterController.switchCrouchStandup)
             {
                 StateMachine.SendEvent(StateEvent.Crouch);
+            }
+
+            if (PlayerCharacterController.doMove)
+            {
+                if (PlayerCharacterController.isRunHold)
+                {
+                    StateMachine.SendEvent(StateEvent.Run_Hold_On);
+                }
+                else
+                {
+                    StateMachine.SendEvent(StateEvent.Walk);
+                }
             }
         }
     }
@@ -71,34 +84,92 @@ public class CharacterLowerBody
     {
         protected override void Update()
         {
-            if (Input.GetKeyDown(KeyCode.V))
+            if (PlayerCharacterController.switchCrouchStandup)
             {
                 StateMachine.SendEvent(StateEvent.Standup);
+            }
+
+            if (PlayerCharacterController.doMove)
+            {
+                StateMachine.SendEvent(StateEvent.Walk);
             }
         }
     }
 
     class Crouch_Walk : ImtStateMachine<CharacterLowerBody, StateEvent>.State
     {
+        bool allowRun;
+
         protected override void Enter()
         {
-            Debug.Log("Crouch_Walk enter");
+            allowRun = StateMachine.LastAcceptedEventID != StateEvent.Crouch;
+        }
+
+        protected override void Update()
+        {
+            if (PlayerCharacterController.isStop)
+            {
+                StateMachine.SendEvent(StateEvent.Stop);
+            }
+
+            if (PlayerCharacterController.switchCrouchStandup)
+            {
+                StateMachine.SendEvent(StateEvent.Standup);
+            }
+
+            if (PlayerCharacterController.isRunHold)
+            {
+                if (allowRun)
+                {
+                    StateMachine.SendEvent(StateEvent.Run_Hold_On);
+                }
+            }
+            else
+            {
+                allowRun = true;
+            }
         }
     }
 
     class Walk : ImtStateMachine<CharacterLowerBody, StateEvent>.State
     {
-        protected override void Enter()
+        protected override void Update()
         {
-            Debug.Log("Walk enter");
+            if (PlayerCharacterController.isStop)
+            {
+                StateMachine.SendEvent(StateEvent.Stop);
+            }
+
+            if (PlayerCharacterController.switchCrouchStandup)
+            {
+                StateMachine.SendEvent(StateEvent.Crouch);
+            }
+
+            if (PlayerCharacterController.isRunHold)
+            {
+                StateMachine.SendEvent(StateEvent.Run_Hold_On);
+            }
         }
     }
 
     class Run : ImtStateMachine<CharacterLowerBody, StateEvent>.State
     {
-        protected override void Enter()
+        protected override void Update()
         {
-            Debug.Log("Run enter");
+            if (PlayerCharacterController.isStop)
+            {
+                StateMachine.SendEvent(StateEvent.Stop);
+            }
+
+            if (PlayerCharacterController.switchCrouchStandup)
+            {
+                StateMachine.SendEvent(StateEvent.Crouch);
+            }
+
+            if (!PlayerCharacterController.isRunHold)
+            {
+                StateMachine.SendEvent(StateEvent.Run_Hold_Off);
+            }
         }
     }
 }

@@ -1,6 +1,6 @@
+using System;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class PlayerCharacterController : MonoBehaviour
 {
@@ -53,6 +53,11 @@ public class PlayerCharacterController : MonoBehaviour
 
     new Rigidbody rigidbody;
 
+    public static bool switchCrouchStandup;
+    public static bool doMove;
+    public static bool isRunHold;
+    public static bool isStop;
+
     void Awake()
     {
         upperBody = new CharacterUpperBody();
@@ -64,6 +69,8 @@ public class PlayerCharacterController : MonoBehaviour
 
     void Update()
     {
+        UpdateState();
+
         upperBody.UpdateState();
         lowerBody.UpdateState();
 
@@ -76,6 +83,25 @@ public class PlayerCharacterController : MonoBehaviour
     {
         upperBodyText.text = "";
         lowerBodyText.text = lowerBody.GetCurrentStateName();
+    }
+
+    void UpdateState()
+    {
+        KeyCode crouchStandupSwitchKey = KeyCode.V;
+        KeyCode runKey = KeyCode.LeftShift;
+        float horizontalMove = Input.GetAxis("Horizontal");
+        float verticalMove = Input.GetAxis("Vertical");
+
+        float moveThreshold = 0.1f;
+
+
+        switchCrouchStandup = Input.GetKeyDown(crouchStandupSwitchKey);
+
+        doMove = Mathf.Abs(horizontalMove) >= moveThreshold || Mathf.Abs(verticalMove) >= moveThreshold;
+
+        isRunHold = Input.GetKey(runKey);
+
+        isStop = Mathf.Abs(horizontalMove) <= moveThreshold && Mathf.Abs(verticalMove) <= moveThreshold;
     }
 
     void Walk()
