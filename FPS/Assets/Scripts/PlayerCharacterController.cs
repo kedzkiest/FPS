@@ -53,10 +53,14 @@ public class PlayerCharacterController : MonoBehaviour
 
     new Rigidbody rigidbody;
 
-    public static bool switchCrouchStandup;
-    public static bool doMove;
-    public static bool isRunHold;
-    public static bool isStop;
+    public static bool DoSwitchCrouchStandup { get; private set; }
+    public static bool IsWalking { get; private set; }
+    public static bool IsRunning { get; private set; }
+    public static bool DoStop { get; private set; }
+    public static bool IsADSing { get; private set; }
+    public static bool DoReload { get; private set; }
+    public static bool IsPlanting { get; private set; }
+
 
     void Awake()
     {
@@ -81,7 +85,7 @@ public class PlayerCharacterController : MonoBehaviour
     [SerializeField] TextMeshPro lowerBodyText;
     void DebugPrint(CharacterUpperBody upperBody, CharacterLowerBody lowerBody)
     {
-        upperBodyText.text = "";
+        upperBodyText.text = upperBody.GetCurrentStateName();
         lowerBodyText.text = lowerBody.GetCurrentStateName();
     }
 
@@ -91,17 +95,26 @@ public class PlayerCharacterController : MonoBehaviour
         KeyCode runKey = KeyCode.LeftShift;
         float horizontalMove = Input.GetAxis("Horizontal");
         float verticalMove = Input.GetAxis("Vertical");
+        int rightMouseButton = 1;
+        KeyCode reloadKey = KeyCode.R;
+        KeyCode plantKey = KeyCode.F;
 
-        float moveThreshold = 0.1f;
+        float walkThreshold = 0.1f;
 
 
-        switchCrouchStandup = Input.GetKeyDown(crouchStandupSwitchKey);
+        DoSwitchCrouchStandup = Input.GetKeyDown(crouchStandupSwitchKey);
 
-        doMove = Mathf.Abs(horizontalMove) >= moveThreshold || Mathf.Abs(verticalMove) >= moveThreshold;
+        IsWalking = Mathf.Abs(horizontalMove) >= walkThreshold || Mathf.Abs(verticalMove) >= walkThreshold;
 
-        isRunHold = Input.GetKey(runKey);
+        IsRunning = IsWalking && Input.GetKey(runKey);
 
-        isStop = Mathf.Abs(horizontalMove) <= moveThreshold && Mathf.Abs(verticalMove) <= moveThreshold;
+        DoStop = Mathf.Abs(horizontalMove) <= walkThreshold && Mathf.Abs(verticalMove) <= walkThreshold;
+
+        IsADSing = Input.GetMouseButton(rightMouseButton);
+
+        DoReload = Input.GetKeyDown(reloadKey);
+
+        IsPlanting = Input.GetKey(plantKey);
     }
 
     void Walk()
