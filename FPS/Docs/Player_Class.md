@@ -19,6 +19,16 @@ classDiagram
 
         + Rigidbody rigidbody
 
+        + bool doSwitchCrouchStandup$
+        + bool doMove$
+        + bool doRunHold$
+        + bool doStop$
+        + bool IsADSing$
+        + bool DoReload$
+        + bool IsPlanting$
+
+        - UpdateState()
+
         - Idle()
         - Walk()
         - Run()
@@ -40,14 +50,6 @@ classDiagram
         - SetState(StateEvent)
     }
 
-    namespace LowerBodyState{
-        class Idle_1
-        class Crouch_Idle
-        class Crouch_Walk
-        class Walk
-        class Run
-    }
-
     CharacterLowerBody --> Idle_1: contains
     CharacterLowerBody --> Crouch_Idle: contains
     CharacterLowerBody --> Crouch_Walk: contains
@@ -67,7 +69,7 @@ classDiagram
 
     class CharacterUpperBody{
         + enum StateEvent
-        - ImtStateMachine~CharacterLowerBody, StateEvent~ stateMachine
+        - ImtStateMachine~CharacterUpperBody, StateEvent~ stateMachine
 
         - animator Animator
 
@@ -77,19 +79,14 @@ classDiagram
         - SetState(StateEvent)
     }
 
-    namespace UpperBodyState{
-        class Idle_2
-        class ADS
-        class Reload
-        class Plant
-    }
-
     CharacterUpperBody --> Idle_2: contains
+    CharacterUpperBody --> Run_2: contains
     CharacterUpperBody --> ADS: contains
     CharacterUpperBody --> Reload: contains
     CharacterUpperBody --> Plant: contains
 
     Idle_2 --|> ImtStateMachine_State
+    Run_2 --|> ImtStateMachine_State
     ADS --|> ImtStateMachine_State
     Reload --|> ImtStateMachine_State
     Plant --|> ImtStateMachine_State
