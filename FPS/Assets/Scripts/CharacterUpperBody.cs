@@ -23,29 +23,29 @@ public class CharacterUpperBody
     {
         stateMachine = new ImtStateMachine<CharacterUpperBody, StateEvent>(this);
 
-        stateMachine.AddTransition<Idle, Run>(StateEvent.Run_Start);
-        stateMachine.AddTransition<Idle, ADS>(StateEvent.ADS_Hold_On);
-        stateMachine.AddTransition<Idle, Reload>(StateEvent.Reload);
-        stateMachine.AddTransition<Idle, Plant>(StateEvent.Plant_Hold_On);
+        stateMachine.AddTransition<IdleState, RunState>(StateEvent.Run_Start);
+        stateMachine.AddTransition<IdleState, ADSState>(StateEvent.ADS_Hold_On);
+        stateMachine.AddTransition<IdleState, ReloadState>(StateEvent.Reload);
+        stateMachine.AddTransition<IdleState, PlantState>(StateEvent.Plant_Hold_On);
 
-        stateMachine.AddTransition<Run, Idle>(StateEvent.Run_Stop);
-        stateMachine.AddTransition<Run, ADS>(StateEvent.ADS_Hold_On);
-        stateMachine.AddTransition<Run, Plant>(StateEvent.Plant_Hold_On);
+        stateMachine.AddTransition<RunState, IdleState>(StateEvent.Run_Stop);
+        stateMachine.AddTransition<RunState, ADSState>(StateEvent.ADS_Hold_On);
+        stateMachine.AddTransition<RunState, PlantState>(StateEvent.Plant_Hold_On);
 
-        stateMachine.AddTransition<ADS, Idle>(StateEvent.ADS_Hold_Off);
-        stateMachine.AddTransition<ADS, Run>(StateEvent.Run_Start);
-        stateMachine.AddTransition<ADS, Reload>(StateEvent.Reload);
-        stateMachine.AddTransition<ADS, Plant>(StateEvent.Plant_Hold_On);
+        stateMachine.AddTransition<ADSState, IdleState>(StateEvent.ADS_Hold_Off);
+        stateMachine.AddTransition<ADSState, RunState>(StateEvent.Run_Start);
+        stateMachine.AddTransition<ADSState, ReloadState>(StateEvent.Reload);
+        stateMachine.AddTransition<ADSState, PlantState>(StateEvent.Plant_Hold_On);
 
-        stateMachine.AddTransition<Reload, Idle>(StateEvent.Time_Elapsed);
-        stateMachine.AddTransition<Reload, Run>(StateEvent.Run_Start);
-        stateMachine.AddTransition<Reload, ADS>(StateEvent.ADS_Hold_On);
-        stateMachine.AddTransition<Reload, Plant>(StateEvent.Plant_Hold_On);
+        stateMachine.AddTransition<ReloadState, IdleState>(StateEvent.Time_Elapsed);
+        stateMachine.AddTransition<ReloadState, RunState>(StateEvent.Run_Start);
+        stateMachine.AddTransition<ReloadState, ADSState>(StateEvent.ADS_Hold_On);
+        stateMachine.AddTransition<ReloadState, PlantState>(StateEvent.Plant_Hold_On);
 
-        stateMachine.AddTransition<Plant, Idle>(StateEvent.Plant_Hold_Off);
-        stateMachine.AddTransition<Plant, Idle>(StateEvent.Time_Elapsed);
+        stateMachine.AddTransition<PlantState, IdleState>(StateEvent.Plant_Hold_Off);
+        stateMachine.AddTransition<PlantState, IdleState>(StateEvent.Time_Elapsed);
 
-        stateMachine.SetStartState<Idle>();
+        stateMachine.SetStartState<IdleState>();
     }
 
     public void UpdateState()
@@ -63,33 +63,33 @@ public class CharacterUpperBody
         stateMachine.SendEvent(_stateEvent);
     }
 
-    class Idle : ImtStateMachine<CharacterUpperBody, StateEvent>.State
+    class IdleState : ImtStateMachine<CharacterUpperBody, StateEvent>.State
     {
         protected override void Update()
         {
-            if (PlayerCharacterController.IsRunning)
+            if (Player.IsRunning)
             {
                 StateMachine.SendEvent(StateEvent.Run_Start);
             }
 
-            if (PlayerCharacterController.IsADSing)
+            if (Player.IsADSing)
             {
                 StateMachine.SendEvent(StateEvent.ADS_Hold_On);
             }
 
-            if (PlayerCharacterController.DoReload)
+            if (Player.DoReload)
             {
                 StateMachine.SendEvent(StateEvent.Reload);
             }
 
-            if (PlayerCharacterController.IsPlanting)
+            if (Player.IsPlanting)
             {
                 StateMachine.SendEvent(StateEvent.Plant_Hold_On);
             }
         }
     }
 
-    class Run : ImtStateMachine<CharacterUpperBody, StateEvent>.State
+    class RunState : ImtStateMachine<CharacterUpperBody, StateEvent>.State
     {
         bool allowADS;
 
@@ -100,12 +100,12 @@ public class CharacterUpperBody
 
         protected override void Update()
         {
-            if (!PlayerCharacterController.IsRunning)
+            if (!Player.IsRunning)
             {
                 StateMachine.SendEvent(StateEvent.Run_Stop);
             }
 
-            if (PlayerCharacterController.IsADSing)
+            if (Player.IsADSing)
             {
                 if (allowADS)
                 {
@@ -117,14 +117,14 @@ public class CharacterUpperBody
                 allowADS = true;
             }
 
-            if (PlayerCharacterController.IsPlanting)
+            if (Player.IsPlanting)
             {
                 StateMachine.SendEvent(StateEvent.Plant_Hold_On);
             }
         }
     }
 
-    class ADS : ImtStateMachine<CharacterUpperBody, StateEvent>.State
+    class ADSState : ImtStateMachine<CharacterUpperBody, StateEvent>.State
     {
         bool allowRun;
 
@@ -135,12 +135,12 @@ public class CharacterUpperBody
 
         protected override void Update()
         {
-            if (!PlayerCharacterController.IsADSing)
+            if (!Player.IsADSing)
             {
                 StateMachine.SendEvent(StateEvent.ADS_Hold_Off);
             }
 
-            if (PlayerCharacterController.IsRunning)
+            if (Player.IsRunning)
             {
                 if (allowRun)
                 {
@@ -152,19 +152,19 @@ public class CharacterUpperBody
                 allowRun = true;
             }
 
-            if (PlayerCharacterController.DoReload)
+            if (Player.DoReload)
             {
                 StateMachine.SendEvent(StateEvent.Reload);
             }
 
-            if (PlayerCharacterController.IsPlanting)
+            if (Player.IsPlanting)
             {
                 StateMachine.SendEvent(StateEvent.Plant_Hold_On);
             }
         }
     }
 
-    class Reload : ImtStateMachine<CharacterUpperBody, StateEvent>.State
+    class ReloadState : ImtStateMachine<CharacterUpperBody, StateEvent>.State
     {
         float elapsedTime;
         float reloadTime = 1.0f;
@@ -187,12 +187,12 @@ public class CharacterUpperBody
                 StateMachine.SendEvent(StateEvent.Time_Elapsed);
             }
 
-            if (PlayerCharacterController.IsRunning)
+            if (Player.IsRunning)
             {
                 StateMachine.SendEvent(StateEvent.Run_Start);
             }
 
-            if (PlayerCharacterController.IsADSing)
+            if (Player.IsADSing)
             {
                 if (allowADS)
                 {
@@ -204,14 +204,14 @@ public class CharacterUpperBody
                 allowADS = true;
             }
 
-            if (PlayerCharacterController.IsPlanting)
+            if (Player.IsPlanting)
             {
                 StateMachine.SendEvent(StateEvent.Plant_Hold_On);
             }
         }
     }
 
-    class Plant : ImtStateMachine<CharacterUpperBody, StateEvent>.State
+    class PlantState : ImtStateMachine<CharacterUpperBody, StateEvent>.State
     {
         float elapsedTime;
         float plantTime = 1.0f;
@@ -230,7 +230,7 @@ public class CharacterUpperBody
                 StateMachine.SendEvent(StateEvent.Time_Elapsed);
             }
 
-            if (!PlayerCharacterController.IsPlanting)
+            if (!Player.IsPlanting)
             {
                 StateMachine.SendEvent(StateEvent.Plant_Hold_Off);
             }
