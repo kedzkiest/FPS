@@ -2,7 +2,7 @@ using System;
 using TMPro;
 using UnityEngine;
 
-public class PlayerCharacterController : MonoBehaviour
+public class Player : MonoBehaviour
 {
     [SerializeField] bool isAlive;
     public bool IsAlive
