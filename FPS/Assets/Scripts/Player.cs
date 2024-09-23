@@ -1,4 +1,3 @@
-using System;
 using TMPro;
 using UnityEngine;
 
@@ -51,7 +50,7 @@ public class Player : MonoBehaviour
         private set { runSpeed = value; }
     }
 
-    new Rigidbody rigidbody;
+    [SerializeField] new Rigidbody rigidbody;
 
     public static bool DoSwitchCrouchStandup { get; private set; }
     public static bool IsWalking { get; private set; }
@@ -60,7 +59,6 @@ public class Player : MonoBehaviour
     public static bool IsADSing { get; private set; }
     public static bool DoReload { get; private set; }
     public static bool IsPlanting { get; private set; }
-
 
     void Awake()
     {
@@ -117,33 +115,43 @@ public class Player : MonoBehaviour
         IsPlanting = Input.GetKey(plantKey);
     }
 
-    void Walk()
+    public void Idle()
     {
-
+        Debug.Log("Idle");
     }
 
-    void Run()
+    public void Crouch()
     {
-
+        Debug.Log("Crouch");
     }
 
-    void ADS()
+    public void Walk()
     {
-
+        Debug.Log("Walk");
     }
 
-    void Shoot()
+    public void Run()
     {
-
+        Debug.Log("Run");
     }
 
-    void Reload()
+    public void ADS()
     {
-
+        Debug.Log("ADS");
     }
 
-    void Plant()
+    public void Shoot()
     {
+        Debug.Log("Shoot");
+    }
 
+    public void Reload()
+    {
+        Debug.Log("Reload");
+    }
+
+    public void Plant()
+    {
+        Debug.Log("Plant");
     }
 }
