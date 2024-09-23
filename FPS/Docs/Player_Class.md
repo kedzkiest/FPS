@@ -1,10 +1,10 @@
 ```mermaid
 classDiagram
-    PlayerCharacterController *.. CharacterUpperBody
-    PlayerCharacterController *.. CharacterLowerBody
+    Player *.. CharacterUpperBody
+    Player *.. CharacterLowerBody
 
-    PlayerCharacterController --|> MonoBehaviour
-    class PlayerCharacterController{
+    Player --|> MonoBehaviour
+    class Player{
         + bool IsAlive
         + bool IsGrounded
         + bool HasDefuser
@@ -30,6 +30,7 @@ classDiagram
         - UpdateState()
 
         - Idle()
+        - Crouch()
         - Walk()
         - Run()
         - ADS()
@@ -50,22 +51,22 @@ classDiagram
         - SetState(StateEvent)
     }
 
-    CharacterLowerBody --> Idle_1: contains
-    CharacterLowerBody --> Crouch_Idle: contains
-    CharacterLowerBody --> Crouch_Walk: contains
-    CharacterLowerBody --> Walk: contains
-    CharacterLowerBody --> Run: contains
+    CharacterLowerBody --> IdleState: contains
+    CharacterLowerBody --> CrouchIdleState: contains
+    CharacterLowerBody --> CrouchWalkState: contains
+    CharacterLowerBody --> WalkState: contains
+    CharacterLowerBody --> RunState: contains
 
     class ImtStateMachine_State{
         - Enter()
         - Update()
         - Exit()
     }
-    Idle_1 --|> ImtStateMachine_State
-    Crouch_Idle --|> ImtStateMachine_State
-    Crouch_Walk--|> ImtStateMachine_State
-    Walk --|> ImtStateMachine_State
-    Run --|> ImtStateMachine_State
+    IdleState --|> ImtStateMachine_State
+    CrouchIdleState --|> ImtStateMachine_State
+    CrouchWalkState--|> ImtStateMachine_State
+    WalkState --|> ImtStateMachine_State
+    RunState --|> ImtStateMachine_State
 
     class CharacterUpperBody{
         + enum StateEvent
@@ -79,16 +80,16 @@ classDiagram
         - SetState(StateEvent)
     }
 
-    CharacterUpperBody --> Idle_2: contains
-    CharacterUpperBody --> Run_2: contains
-    CharacterUpperBody --> ADS: contains
-    CharacterUpperBody --> Reload: contains
-    CharacterUpperBody --> Plant: contains
+    CharacterUpperBody --> IdleState_2: contains
+    CharacterUpperBody --> RunState_2: contains
+    CharacterUpperBody --> ADSState: contains
+    CharacterUpperBody --> ReloadState: contains
+    CharacterUpperBody --> PlantState: contains
 
-    Idle_2 --|> ImtStateMachine_State
-    Run_2 --|> ImtStateMachine_State
-    ADS --|> ImtStateMachine_State
-    Reload --|> ImtStateMachine_State
-    Plant --|> ImtStateMachine_State
+    IdleState_2 --|> ImtStateMachine_State
+    RunState_2 --|> ImtStateMachine_State
+    ADSState --|> ImtStateMachine_State
+    ReloadState --|> ImtStateMachine_State
+    PlantState --|> ImtStateMachine_State
 
 ```
